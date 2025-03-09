@@ -2,7 +2,6 @@ import streamlit as st
 import re
 import time
 import random
-from streamlit_extras.stylable_container import stylable_container
 
 def check_password_strength(password):
     strength = 0
@@ -64,13 +63,11 @@ if st.button("Check Password Strength"):
         # Progress bar animation
         st.progress(progress)
         
-        # Confetti effect for strong passwords
+        # Balloon effect for strong passwords
         if strength == "🔥 Strong":
-            with stylable_container("confetti", css_styles="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none;"):
-                for _ in range(10):
-                    x_pos = random.randint(10, 90)
-                    y_pos = random.randint(10, 90)
-                    st.markdown(f'<div style="position:absolute; top:{y_pos}%; left:{x_pos}%; font-size:24px;">🎉</div>', unsafe_allow_html=True)
+            st.balloons()
+        elif strength == "⚠️ Moderate":
+            st.snow()
         
         if feedback:
             st.write("### Suggestions:")
