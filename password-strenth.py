@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import time
+from streamlit_extras.let_it_rain import rain
 
 def check_password_strength(password):
     strength = 0
@@ -47,9 +48,6 @@ st.markdown("### Check your password's strength with real-time feedback!")
 
 password = st.text_input("Enter your password:", type="password")
 
-# Suggest a strong password below input field
-st.markdown("**Suggested Strong Password:** `P@ssw0rd123!` (Customize it!)")
-
 if st.button("Check Password Strength"):
     if password:
         with st.spinner("Analyzing password strength..."):
@@ -58,6 +56,13 @@ if st.button("Check Password Strength"):
         strength, color, feedback = check_password_strength(password)
         
         st.markdown(f"<h3 style='color:{color}; text-align:center'>{strength}</h3>", unsafe_allow_html=True)
+        
+        if strength == "🔥 Strong":
+            rain(emoji="💪", font_size=20, falling_speed=3, animation_length="infinite")
+        elif strength == "⚠️ Moderate":
+            rain(emoji="⚡", font_size=20, falling_speed=3, animation_length="infinite")
+        else:
+            rain(emoji="💔", font_size=20, falling_speed=3, animation_length="infinite")
         
         if feedback:
             st.write("### Suggestions:")
