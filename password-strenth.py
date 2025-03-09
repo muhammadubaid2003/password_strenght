@@ -1,0 +1,72 @@
+import streamlit as st
+import re
+import time
+from streamlit_extras.let_it_rain import rain
+
+def check_password_strength(password):
+    strength = 0
+    feedback = []
+    
+    # Length check
+    if len(password) >= 12:
+        strength += 2
+    elif len(password) >= 8:
+        strength += 1
+    else:
+        feedback.append("🔴 Password should be at least 8 characters long.")
+    
+    # Upper and lowercase check
+    if re.search(r"[a-z]", password) and re.search(r"[A-Z]", password):
+        strength += 1
+    else:
+        feedback.append("🟠 Use both uppercase and lowercase letters.")
+    
+    # Digit check
+    if re.search(r"\d", password):
+        strength += 1
+    else:
+        feedback.append("🟡 Include at least one digit.")
+    
+    # Special character check
+    if re.search(r"[@$!%*?&]", password):
+        strength += 1
+    else:
+        feedback.append("🟢 Include at least one special character (@, $, !, %, *, ?, &).")
+    
+    # Strength classification
+    if strength >= 4:
+        return "🔥 Strong", "green", feedback
+    elif strength >= 2:
+        return "⚠️ Moderate", "orange", feedback
+    else:
+        return "❌ Weak", "red", feedback
+
+# Streamlit UI
+st.set_page_config(page_title="Password Strength Checker", page_icon="🔒", layout="centered")
+st.title("🔐 Innovative Password Strength Checker")
+st.markdown("### Check your password's strength with real-time feedback!")
+
+password = st.text_input("Enter your password:", type="password")
+
+if st.button("Check Password Strength"):
+    if password:
+        with st.spinner("Analyzing password strength..."):
+            time.sleep(1.5)
+        
+        strength, color, feedback = check_password_strength(password)
+        
+        st.markdown(f"<h3 style='color:{color}; text-align:center'>{strength}</h3>", unsafe_allow_html=True)
+        
+        if strength == "🔥 Strong":
+            rain(emoji="💪", font_size=20, falling_speed=3, animation_length="infinite")
+        elif strength == "⚠️ Moderate":
+            rain(emoji="⚡", font_size=20, falling_speed=3, animation_length="infinite")
+        else:
+            rain(emoji="💔", font_size=20, falling_speed=3, animation_length="infinite")
+        
+        if feedback:
+            st.write("### Suggestions:")
+            for tip in feedback:
+                st.markdown(f"- {tip}")
+    else:
+        st.warning("Please enter a password to check its strength.")
