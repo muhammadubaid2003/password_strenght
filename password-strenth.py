@@ -1,6 +1,8 @@
 import streamlit as st
 import re
 import time
+import random
+from streamlit_extras.stylable_container import stylable_container
 
 def check_password_strength(password):
     strength = 0
@@ -34,11 +36,11 @@ def check_password_strength(password):
     
     # Strength classification
     if strength >= 4:
-        return "🔥 Strong", "green", feedback
+        return "🔥 Strong", "green", feedback, 100
     elif strength >= 2:
-        return "⚠️ Moderate", "orange", feedback
+        return "⚠️ Moderate", "orange", feedback, 60
     else:
-        return "❌ Weak", "red", feedback
+        return "❌ Weak", "red", feedback, 30
 
 # Streamlit UI
 st.set_page_config(page_title="Password Strength Checker", page_icon="🔒", layout="centered")
@@ -55,9 +57,20 @@ if st.button("Check Password Strength"):
         with st.spinner("Analyzing password strength..."):
             time.sleep(1.5)
         
-        strength, color, feedback = check_password_strength(password)
+        strength, color, feedback, progress = check_password_strength(password)
         
         st.markdown(f"<h3 style='color:{color}; text-align:center'>{strength}</h3>", unsafe_allow_html=True)
+        
+        # Progress bar animation
+        st.progress(progress)
+        
+        # Confetti effect for strong passwords
+        if strength == "🔥 Strong":
+            with stylable_container("confetti", css_styles="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none;"):
+                for _ in range(10):
+                    x_pos = random.randint(10, 90)
+                    y_pos = random.randint(10, 90)
+                    st.markdown(f'<div style="position:absolute; top:{y_pos}%; left:{x_pos}%; font-size:24px;">🎉</div>', unsafe_allow_html=True)
         
         if feedback:
             st.write("### Suggestions:")
